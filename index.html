@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>D.I.T.T.O. 마음 디버깅 센터</title>
+    <style>
+        /* 기본 폰트 및 배경 설정 */
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap');
+        
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #0f172a;
+            color: #f1f5f9;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* 메인 컨테이너 */
+        .app-wrapper {
+            width: 90vw;
+            max-width: 450px;
+            aspect-ratio: 1 / 1;
+            position: relative;
+        }
+
+        /* 카드 스타일 */
+        .card-stack {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .card {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #1e293b;
+            border-radius: 25px;
+            padding: 22px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            transition: all 0.5s ease-out;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.1);
+            opacity: 0;
+            transform: translateX(100px) scale(0.9);
+            pointer-events: none;
+        }
+
+        .card.active {
+            opacity: 1;
+            transform: translateX(0) scale(1);
+            z-index: 10;
+            pointer-events: auto;
+        }
+
+        .card.prev {
+            opacity: 0;
+            transform: translateX(-100px) scale(0.9);
+        }
+
+        /* 장식 요소 */
+        .badge {
+            background: #38bdf8;
+            color: #0f172a;
+            padding: 4px 12px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 700;
+            width: fit-content;
+            margin-bottom: 15px;
+        }
+
+        h1 { font-size: 30px; margin: 0 0 10px 0; line-height: 1.2; }
+        h2 { font-size: 22px; margin: 0 0 10px 0; color: #38bdf8; }
+        h3 { font-size: 16px; margin: 0 0 5px 0; color: #e2e8f0; }
+        
+        .highlight { color: #38bdf8; }
+
+        .quote-box {
+            background: rgba(255, 255, 255, 0.05);
+            border-left: 4px solid #38bdf8;
+            padding: 12px 15px;
+            margin: 10px 0 15px 0;
+            font-size: 12px;
+            line-height: 1.6;
+            color: #cbd5e1;
+            word-break: keep-all;
+        }
+
+        p { color: #94a3b8; font-size: 12px; line-height: 1.6; margin-bottom: 15px; word-break: keep-all; }
+
+        /* 하단 컨트롤 */
+        .controls {
+            position: absolute;
+            bottom: -70px;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .btn {
+            flex: 1;
+            background: #38bdf8;
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .btn-prev { background: #334155; }
+
+        /* 상단 인디케이터 */
+        .dots {
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+        }
+
+        .dot {
+            width: 8px; height: 8px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            transition: 0.3s;
+        }
+
+        .dot.active {
+            width: 20px;
+            background: #38bdf8;
+            border-radius: 10px;
+        }
+
+        /* 마지막 카드 특수 스타일 */
+        .mission-list {
+            list-style: none; padding: 0; margin-bottom: 10px;
+        }
+        .mission-item {
+            background: rgba(255,255,255,0.03);
+            margin-bottom: 8px;
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 13px;
+            border-left: 3px solid #38bdf8;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-wrapper">
+        <div class="dots" id="dots"></div>
+
+        <div class="card-stack" id="stack">
+            <!-- 0. 인트로 -->
+            <div class="card active">
+                <div class="badge">D.I.T.T.O.</div>
+                <h1>마음 <span class="highlight">디버깅</span><br>센터</h1>
+                <p>현재 내 마음의 상태를 진단하셨나요?<br><br>아들러 심리학의 정수가 담긴 <b>'인문학 백신'</b>을 통해 관계의 불안을 해결하고 마음의 평화를 되찾으세요.</p>
+                <p style="color: #64748b;">(아래 버튼을 눌러 입장하세요)</p>
+            </div>
+
+            <!-- 1. 도서 소개 (추가된 부분) -->
+            <div class="card">
+                <div class="badge">도서 안내</div>
+                <h2>미움받을 용기</h2>
+                <h3>저자: 기시미 이치로, 고가 후미타케</h3>
+                <div class="quote-box" style="margin-top: 15px;">
+                    심리학자 알프레드 아들러(Alfred Adler)의 심리학을 '철학자'와 '청년'의 대화 형식으로 알기 쉽게 풀어낸 베스트셀러입니다.
+                </div>
+                <p>과거의 상처(트라우마)에 얽매이지 않고, 타인의 시선과 기대에서 벗어나 '지금, 여기'를 주체적으로 살아가는 진정한 자유와 행복에 대한 통찰을 제시합니다.</p>
+            </div>
+
+            <!-- 2. 과거 -->
+            <div class="card">
+                <div class="badge">Vaccine 01</div>
+                <h2>과거에 <span class="highlight">지배받지 않는 삶</span></h2>
+                <div class="quote-box">
+                    "[철학자] : 어떠한 경험도 그 자체는 성공의 원인도 실패의 원인도 아니다. 우리는 경험을 통해서 받은 충격_즉 트라우마_으로 고통받는 것이 아니라, 경험 안에서 목적에 맞는 수단을 찾아낸다. 경험에 의해 결정되는 것이 아니라, 경험에 부여한 의미에 따라 자신을 결정하는 것이다."
+                </div>
+                <p>"[철학자] : 말 그대로일세. '경험 그 자체'가 아니라 '경험에 부여한 의미'에 따라 자신을 결정한다는 말이지. 인생이란 누군가가 정해주는 것이 아니라 스스로 선택하는 걸세."</p>
+            </div>
+
+            <!-- 3. 인간관계 -->
+            <div class="card">
+                <div class="badge">Vaccine 02</div>
+                <h2>모든 고민은 <span class="highlight">인간관계</span>에서</h2>
+                <div class="quote-box">
+                    "[철학자] : 인간의 고민은 죄다 인간관계에서 비롯된 고민이다. 만약 이 세계에 인간관계가 사라진다면 그야말로 우주 공간에는 단 한 사람만 존재하고, 다른 사람이 사라진다면 온갖 고민도 사라질 걸세."
+                </div>
+                <p>"[철학자] : 고독을 느끼는 것은 자네가 혼자라서가 아닐쎄. 자네를 둘러싼 타인·사회·공동체가 있고, 이러한 것들로부터 소외되고 있다고 느끼기 때문에 고독한 거지."</p>
+            </div>
+
+            <!-- 4. 경쟁 -->
+            <div class="card">
+                <div class="badge">Vaccine 03</div>
+                <h2>경쟁에서 벗어나 <span class="highlight">동료</span>로</h2>
+                <div class="quote-box">
+                    "[철학자] : 경쟁의 무서움은 그걸세. 설사 패자가 되지 않더라도, 경쟁에서 계속 이긴다고 할지라도 경쟁 속에서 사는 사람은 마음이 편할 새가 없어."
+                </div>
+                <p>"[철학자] : 하지만 일단 경쟁의 도식에서 해방되면 누군가에게 이길 필요가 없네. 다른 사람의 행복을 진심으로 축복할 수 있게 되고, 적극적으로 공헌할 수 있게 되네. 언제든 도움의 손길을 내어줄, 믿을 수 있는 타인, 그것이 친구가 아니면 무엇이겠나."</p>
+            </div>
+
+            <!-- 5. 과제의 분리 -->
+            <div class="card">
+                <div class="badge">Vaccine 04</div>
+                <h2><span class="highlight">과제</span>를 분리하라</h2>
+                <div class="quote-box">
+                    "[철학자] : 먼저 '이것은 누구의 과제인가'를 생각하게. 그리고 과제를 분리하게. 어디까지가 내 과제이고, 어디서부터가 타인의 과제인가. 냉정하게 선을 긋는 걸세."
+                </div>
+                <p>"[철학자] : 그리고 누구도 내 과제를 개입시키지 말고, 나도 타인의 과제에 개입하지 않는다. 이것이야 말로 구체적이고도 대인관계의 고민을 단숨에 해결할 수 있는, 아들러 심리학만의 획기적인 점이라고 할 수 있지."</p>
+            </div>
+
+            <!-- 6. 신뢰 -->
+            <div class="card">
+                <div class="badge">Vaccine 05</div>
+                <h2>타인의 <span class="highlight">과제</span> 버리기</h2>
+                <div class="quote-box">
+                    "[철학자] : 믿는다는 행위 또한 과제의 분리일세. 알겠나? 상대방을 믿는 것, 이것은 자네의 과제일세. 하지만 자네의 기대와 신뢰를 받은 상대가 어떻게 행동하느냐 하는 것은 그 사람의 과제인 걸세."
+                </div>
+                <p>"[철학자] : 비록 상대방이 내 희망대로 움직여주지 않는다 하더라도 계속 믿을 수 있을까, 사랑할 수 있을까. 아들러가 말하는 '사랑의 과제'에는 그런 질문까지 포함되어 있다네."</p>
+            </div>
+
+            <!-- 7. 자기수용 -->
+            <div class="card">
+                <div class="badge">Vaccine 06</div>
+                <h2>있는 그대로 <span class="highlight">자기수용</span></h2>
+                <div class="quote-box">
+                    "[철학자] : 교환이 불가능함을 받아들이는 것. 있는 그대로의 '이런 나'를 받아들이는 것. 그리고 바꿀 수 있는 것을 바꾸는 '용기'를 낸다. 그것이 자기수용이야."
+                </div>
+                <p>"[철학자] : 과제를 분리하는 것과 마찬가지로 '변할 수 있는 것'과 '변할 수 없는 것'을 구분해야 하네. 우리는 능력이 부족한 것이 아니라네. 그저 '용기'가 부족한 거지. 모든 것은 '용기'의 문제라네."</p>
+            </div>
+
+            <!-- 8. 액션 -->
+            <div class="card">
+                <div class="badge">MISSION</div>
+                <h2>백신 <span class="highlight">처방</span> 완료</h2>
+                <p>이제 마음의 버그를 치료할 백신 문장을 선택했나요? 다음 단계를 수행하세요.</p>
+                <div class="mission-list">
+                    <div class="mission-item">1. 학습지에 백신 문장과 이유 적기</div>
+                    <div class="mission-item">2. 손글씨로 따뜻한 응원의 말 작성하기</div>
+                    <div class="mission-item">3. 작성한 응원의 말을 '다했어요'에 인증샷 올리기</div>
+                    <div class="mission-item">4. 친구에게 직접 전달하기</div>
+                </div>
+                <button onclick="location.reload()" class="btn" style="background: transparent; border: 1px solid #38bdf8; margin-top: 10px;">처음부터 다시 보기</button>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn btn-prev" id="prevBtn" onclick="go(-1)">이전</button>
+            <button class="btn" id="nextBtn" onclick="go(1)">다음</button>
+        </div>
+    </div>
+
+    <script>
+        let idx = 0;
+        const cards = document.querySelectorAll('.card');
+        const dotsBox = document.getElementById('dots');
+        const total = cards.length;
+
+        // 인디케이터 생성
+        cards.forEach((_, i) => {
+            const d = document.createElement('div');
+            d.className = i === 0 ? 'dot active' : 'dot';
+            dotsBox.appendChild(d);
+        });
+
+        function go(step) {
+            const nextIdx = idx + step;
+            if (nextIdx < 0 || nextIdx >= total) return;
+
+            // 현재 카드 정리
+            cards[idx].classList.remove('active');
+            if(step > 0) cards[idx].classList.add('prev');
+            else cards[idx].classList.remove('prev');
+
+            // 이동
+            idx = nextIdx;
+            
+            // 새 카드 활성화
+            cards[idx].classList.add('active');
+            cards[idx].classList.remove('prev');
+
+            update();
+        }
+
+        function update() {
+            // 버튼 제어
+            document.getElementById('prevBtn').style.visibility = idx === 0 ? 'hidden' : 'visible';
+            
+            if (idx === 0) {
+                document.getElementById('nextBtn').innerText = '도서 안내 보기';
+            } else if (idx === 1) {
+                document.getElementById('nextBtn').innerText = '백신 처방 시작';
+            } else if (idx === total - 1) {
+                document.getElementById('nextBtn').innerText = '미션 확인';
+            } else {
+                document.getElementById('nextBtn').innerText = '다음 백신';
+            }
+            
+            if(idx === total - 1) {
+                document.getElementById('nextBtn').style.visibility = 'hidden';
+            } else {
+                document.getElementById('nextBtn').style.visibility = 'visible';
+            }
+
+            // 도트 제어
+            const dots = document.querySelectorAll('.dot');
+            dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+        }
+
+        update();
+
+        // 단순 스와이프
+        let startX = 0;
+        document.addEventListener('touchstart', e => {
+            startX = e.touches[0].clientX;
+        });
+        document.addEventListener('touchend', e => {
+            let endX = e.changedTouches[0].clientX;
+            if (startX - endX > 50) go(1);
+            if (endX - startX > 50) go(-1);
+        });
+    </script>
+</body>
+</html>
